@@ -10,25 +10,22 @@ cdef extern from "req.h" namespace 'cstuff':
         Request(int, double)
 
 cdef class IntRequest:
-    cdef Request[int] *creq
+    cdef Request[int] creq
 
     def __init__(
             self,
             int request_id,
             float creation_timestamp,
         ):
-        self.creq = new Request[int](
+        self.creq = Request[int](
             request_id, creation_timestamp
         )
 
     def asdict(self):
         return dict(
-            request_id=dereference(self.creq).request_id,
-            creation_timestamp=dereference(self.creq).creation_timestamp,
+            request_id=(self.creq).request_id,
+            creation_timestamp=(self.creq).creation_timestamp,
         )
 
     def __repr__(self):
         return f"{self.__class__.__name__}(" + ", ".join(f"{k}={v}" for k, v in self.asdict().items()) + ")"
-
-    def __dealloc__(self):
-        del self.creq
